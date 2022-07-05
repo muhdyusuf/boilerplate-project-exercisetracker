@@ -1,4 +1,5 @@
 const mongoose=require("mongoose")
+const { validate } = require("./userModel")
 
 const exerciseSchema=new mongoose.Schema({
 
@@ -11,15 +12,8 @@ const exerciseSchema=new mongoose.Schema({
         required:true,
       },
       date:{
-          type:String,
-          default: function (){
-            let date=new Date().toUTCString()
-            date=date.split(" ")
-            date=date.slice(0,5)
-            return date.join(" ")
-
-          }
-          
+          type:Date,
+          default:Date.now
       }  
     
 })

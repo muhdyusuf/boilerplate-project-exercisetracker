@@ -13,6 +13,7 @@ mongoose.connect("mongodb://localhost/")
 // express model
 const User=require("./userModel")
 const {Exercise} = require('./exerciseModel.js')
+const { count } = require('./userModel')
 
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -47,40 +48,114 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
 
   try{
     let newExercise
-    if(date===""){
+    if(date==="" || date==="Invalid Date"){
       newExercise=new Exercise({
         description,
         duration,
-        
       }
       )
     }
     else{
-      newExercise=new Exercise({
+      newExercise=await new Exercise({
         description,
         duration,
-        date
-      }
-      )
+        date:new Date(date)
+      })
+      
     }
     const user=await User.findById(id)
     await user.log.push(newExercise)
     await user.save()
 
-    res.send(await User.findById(id,{__v:0}))
+    const response={
+      username:user.username,
+      description:newExercise.description,
+      duration:newExercise.duration,
+      date:new Date(newExercise.date).toDateString(),
+      _id:user.id
+
+    }
+
+    res.send(response)
 
     
-
-    
-    
+    console.log(response)
+ 
     console.log("user updated",user)
+    
   }
   catch(err){
-    console.log(err.message)
+    res.sendStatus(403)
 
   }
 
 })
+
+app.get("/api/users/:_id/logs",async(req,res)=>{
+  const id=req.params._id
+  const user=await User.findById(id)
+  let response={
+    _id:id,
+    username:user.username,
+    log:[...user.log]
+  
+   
+  }
+  
+  const {from,to,limit}=req.query
+  if(from){
+    const unixFrom=Date.parse(from)
+    if(unixFrom==="Invalid Date")res.send("Invalid date")
+    response.log=response.log.filter(e=>{
+      const unixDate=Date.parse(e.date)
+      if(unixDate>=unixFrom)return true
+      else{
+        return false
+      }
+    })
+
+  }
+  if(to){
+    const unixTo=Date.parse(to)
+    if(unixTo==="Invalid Date")res.send("Invalid date")
+    response.log=response.log.filter(e=>{
+      const unixDate=Date.parse(e.date)
+      if(unixDate<=unixTo)return true
+      else{
+        return false
+      }
+    })
+
+  }
+  if(limit && parseInt(limit)!==NaN){
+    response.log=response.log.slice(0,limit)    
+  }
+
+  
+  
+  
+
+
+
+  response.count=response.log.length
+  response.log=response.log.map(e=>
+    {
+      return {...e._doc,date:new Date(e.date).toDateString()}
+    }
+  )
+
+  
+  
+  res.send(response)
+  
+})
+
+
+
+
+
+
+
 app.get("/api/users",async(req,res)=>{
   const allUser=await User.find({},"username id")
   res.send(allUser)
