@@ -7,7 +7,8 @@ const mongoose=require("mongoose")
 
 // connect mongoose to db
 
-mongoose.connect("mongodb://localhost/")
+// mongoose.connect("mongodb://localhost/")
+mongoose.connect(process.env.DB_URI,{useNewUrlParser:true}).catch(err=>console.log(err.message))
 
 
 // express model
