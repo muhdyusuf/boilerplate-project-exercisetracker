@@ -1,5 +1,4 @@
 const mongoose=require("mongoose")
-const { validate } = require("./userModel")
 
 const exerciseSchema=new mongoose.Schema({
 
@@ -18,7 +17,7 @@ const exerciseSchema=new mongoose.Schema({
     
 })
 
-module.exports.exerciseSchema=exerciseSchema
+
 
 
 module.exports={

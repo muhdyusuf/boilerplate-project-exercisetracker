@@ -43,15 +43,13 @@ app.post("/api/users",async(req,res)=>{
   
   try{
     const newUser= await new User({username:req.body.username})
-    newUser.save().then((resolve,reject)=>{
-      res.send(
-        {
-          username:newUser.username,
-          _id:newUser.id
-        
-        })
-    })
-    
+    newUser.save()
+    res.send(
+      {
+        username:newUser.username,
+        _id:newUser.id
+      
+      })
   }
   catch(err){
     console.log(err.message)
@@ -95,7 +93,6 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
       }
   
       res.send(response)
-
     }
     ).catch(err=>{
       throw(err)
