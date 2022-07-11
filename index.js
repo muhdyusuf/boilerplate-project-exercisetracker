@@ -36,17 +36,24 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
-app.post("/api/users",(req,res)=>{
+app.post("/api/users",async(req,res)=>{
   
-  const newUser=new User({username:req.body.username})
-  newUser.save().then(e=>console.log("user save"))
-  res.send(
-    {
-      username:newUser.username,
-      _id:newUser.id
-    
-    })
+  try{
+    const newUser=new User({username:req.body.username})
+    newUser.save()
+    res.send(
+      {
+        username:newUser.username,
+        _id:newUser.id
+      
+      })
+  }
+  catch(err){
+    console.log(err.message)
+  }
 })
+
+
 app.post('/api/users/:_id/exercises',async(req,res)=>{
   const {description,duration,date}=req.body
   const id=req.params._id
