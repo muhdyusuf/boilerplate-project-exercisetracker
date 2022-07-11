@@ -62,8 +62,8 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
 
   try{
     let newExercise
-    if(date==="" || date==="Invalid Date"){
-      newExercise=new Exercise({
+    if(date==="" || !date){
+      newExercise=await new Exercise({
         description,
         duration,
       }
