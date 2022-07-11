@@ -21,7 +21,7 @@ mongoose.connect(process.env.DB_URI,{
 
 
 // express model
-const User=require("./userModel")
+const User=require("./userModel.js")
 const {Exercise} = require('./exerciseModel.js')
 
 
@@ -40,14 +40,17 @@ app.get('/', (req, res) => {
 
 
 app.post("/api/users",async(req,res)=>{
-  const {username}=req.body 
+  const {username}=req.body
+  
   try{
-    User.create({username},(err,data)=>{
-      res.send({
-        username:data.username,
-        _id:data.id
+    const newUser= await new User({username})
+    newUser.save()
+    res.send(
+      {
+        username,
+        _id:newUser.id
+      
       })
-    })
   }
   catch(err){
     console.log(err.message)
