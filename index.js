@@ -40,16 +40,14 @@ app.get('/', (req, res) => {
 
 
 app.post("/api/users",async(req,res)=>{
-  
+  const {username}=req.body 
   try{
-    const newUser= await new User({username:req.body.username})
-    newUser.save()
-    res.send(
-      {
-        username:newUser.username,
-        _id:newUser.id
-      
+    User.create({username},(err,data)=>{
+      res.send({
+        username:data.username,
+        _id:data.id
       })
+    })
   }
   catch(err){
     console.log(err.message)
