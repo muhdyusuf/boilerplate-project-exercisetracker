@@ -97,11 +97,14 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
     
   }
   catch(err){
-    res.sendStatus(403)
+    res.send(err.message)
 
   }
 
 })
+
+
+
 
 app.get("/api/users/:_id/logs",async(req,res)=>{
   const id=req.params._id
