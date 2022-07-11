@@ -32,9 +32,12 @@ app.use(bodyParser.json())
 
 app.use(cors())
 app.use(express.static('public'))
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
+
+
 
 app.post("/api/users",async(req,res)=>{
   
@@ -58,7 +61,7 @@ app.post("/api/users",async(req,res)=>{
 app.post('/api/users/:_id/exercises',async(req,res)=>{
   const {description,duration,date}=req.body
   const id=req.params._id
-  console.log(req.body)
+  
 
   try{
     let newExercise
@@ -78,8 +81,10 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
       
     }
     const user=await User.findById(id)
-    await user.log.push(newExercise)
-    await user.save()
+    user.log.push(newExercise)
+    user.save().catch(err=>{
+      throw(err)
+    })
 
     const response={
       username:user.username,
