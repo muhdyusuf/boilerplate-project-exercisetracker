@@ -3,21 +3,28 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config()
 var bodyParser = require('body-parser')
+const dotenv=require("dotenv")
+
 const mongoose=require("mongoose")
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 // connect mongoose to db
 
 // mongoose.connect("mongodb://localhost/")
-mongoose.connect(process.env.DB_URI,{useNewUrlParser:true}).catch(err=>console.log(err.message))
+
+
+mongoose.connect(process.env.DB_URI,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true}).catch(err=>console.log(err.message))
 
 
 // express model
 const User=require("./userModel")
 const {Exercise} = require('./exerciseModel.js')
-const { count } = require('./userModel')
 
 
-app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 
@@ -80,9 +87,7 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
     res.send(response)
 
     
-    console.log(response)
- 
-    console.log("user updated",user)
+  
     
   }
   catch(err){
