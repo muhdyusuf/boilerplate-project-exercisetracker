@@ -163,7 +163,7 @@ app.get("/api/users/:_id/logs",async(req,res)=>{
   response.count=response.log.length
   response.log=response.log.map(e=>
     {
-      return {...e._doc,date:new Date(e.date).toDateString()}
+      return {...e._doc,date:new Date(e._doc.date).toDateString()}
     }
   )
 
