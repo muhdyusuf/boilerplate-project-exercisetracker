@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 app.post("/api/users",async(req,res)=>{
   
   try{
-    const newUser=new User({username:req.body.username})
+    const newUser= await new User({username:req.body.username})
     newUser.save()
     res.send(
       {
@@ -50,6 +50,7 @@ app.post("/api/users",async(req,res)=>{
   }
   catch(err){
     console.log(err.message)
+
   }
 })
 
@@ -58,8 +59,6 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
   const {description,duration,date}=req.body
   const id=req.params._id
   console.log(req.body)
-  if(!req.params._id)res.sendStatus(404)
-
 
   try{
     let newExercise
