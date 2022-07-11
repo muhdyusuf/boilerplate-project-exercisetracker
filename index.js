@@ -82,21 +82,24 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
     }
     const user=await User.findById(id)
     user.log.push(newExercise)
-    user.save().catch(err=>{
+    user.save().then((resolve,reject)=>{
+      const response={
+        username:user.username,
+        description:newExercise.description,
+        duration:newExercise.duration,
+        date:new Date(newExercise.date).toDateString(),
+        _id:user.id
+  
+      }
+  
+      res.send(response)
+      
+    }
+    ).catch(err=>{
       throw(err)
     })
 
-    const response={
-      username:user.username,
-      description:newExercise.description,
-      duration:newExercise.duration,
-      date:new Date(newExercise.date).toDateString(),
-      _id:user.id
-
-    }
-
-    res.send(response)
-
+   
     
   
     
