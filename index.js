@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // mongoose.connect("mongodb://localhost/")
 
 
-mongoose.connect(process.env.DB_URI,{
+mongoose.connect("mongodb://Usopsontorian:WdKJPx2mhxzzK02G@cluster0-shard-00-00.et79p.mongodb.net:27017,cluster0-shard-00-01.et79p.mongodb.net:27017,cluster0-shard-00-02.et79p.mongodb.net:27017/?ssl=true&replicaSet=atlas-gfhr6p-shard-0&authSource=admin&retryWrites=true&w=majority",{
     useNewUrlParser: true,
     useUnifiedTopology: true}).catch(err=>console.log(err.message))
 
