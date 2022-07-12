@@ -116,61 +116,66 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
 
 app.get("/api/users/:_id/logs",async(req,res)=>{
   const id=req.params._id
-  const user=await User.findById(id)
-  let response={
-    _id:id,
-    username:user.username,
-    log:[...user.log]
-  
-   
-  }
-  
-  const {from,to,limit}=req.query
-  if(from){
-    const unixFrom=Date.parse(from)
-    if(unixFrom==="Invalid Date")res.send("Invalid date")
-    response.log=response.log.filter(e=>{
-      const unixDate=Date.parse(e.date)
-      if(unixDate>=unixFrom)return true
-      else{
-        return false
-      }
-    })
-
-  }
-  if(to){
-    const unixTo=Date.parse(to)
-    if(unixTo==="Invalid Date")res.send("Invalid date")
-    response.log=response.log.filter(e=>{
-      const unixDate=Date.parse(e.date)
-      if(unixDate<=unixTo)return true
-      else{
-        return false
-      }
-    })
-
-  }
-  if(limit && parseInt(limit)!==NaN){
-    response.log=response.log.slice(0,limit)    
-  }
-
-  
-  
-  
-
-
-
-  response.count=response.log.length
-  response.log=response.log.map(e=>
-    {
-      
-      return {...e._doc,date:new Date(e.date).toDateString()}
+  User.findById(id,(err,data)=>{
+    let response={
+      _id:data.id,
+      username:data.username,
+      log:data.log
+    
+     
     }
-  )
+    
+    const {from,to,limit}=req.query
 
+
+    if(from){
+      const unixFrom=Date.parse(from)
+      if(unixFrom==="Invalid Date")res.send("Invalid date")
+      response.log=response.log.filter(e=>{
+        const unixDate=Date.parse(e.date)
+        if(unixDate>=unixFrom)return true
+        else{
+          return false
+        }
+      })
+  
+    }
+    if(to){
+      const unixTo=Date.parse(to)
+      if(unixTo==="Invalid Date")res.send("Invalid date")
+      response.log=response.log.filter(e=>{
+        const unixDate=Date.parse(e.date)
+        if(unixDate<=unixTo)return true
+        else{
+          return false
+        }
+      })
+  
+    }
+    if(limit && parseInt(limit)!==NaN){
+      response.log=response.log.slice(0,limit)    
+    }
+  
+    
+    
+    
   
   
-  res.send(response)
+  
+    response.count=response.log.length
+    response.log=response.log.map(e=>{
+      const {description,duration}=e
+      return {description,duration,date:new Date(e.date).toDateString()}
+      
+  })
+  
+    
+    
+    res.send(response)
+
+
+  })
+ 
   
 })
 
