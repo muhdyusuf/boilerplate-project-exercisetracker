@@ -170,7 +170,7 @@ app.get("/api/users/:_id/logs",async(req,res)=>{
       response.count=response.log.length
       response.log=response.log.map(e=>{
         const {description,duration,date}=e
-        const _date=toString(date.toDateString())
+        const _date=new Date(date).toDateString()
         const exercise={description,duration,date:_date}
         return exercise
         
