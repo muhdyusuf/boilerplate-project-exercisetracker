@@ -121,70 +121,74 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
 
 app.get("/api/users/:_id/logs",async(req,res)=>{
   const id=req.params._id
-  User.findById(id,(err,data)=>{
-    if(err){
-      res.send(err.message)
-    }
-    let response={
-      _id:data.id,
-      username:data.username,
-      log:data.log
-    
-     
-    }
-    
-    const {from,to,limit}=req.query
 
-
-    if(from){
-      const unixFrom=Date.parse(from)
-      if(unixFrom==="Invalid Date")res.send("Invalid date")
-      response.log=response.log.filter(e=>{
-        const unixDate=Date.parse(e.date)
-        if(unixDate>=unixFrom)return true
-        else{
-          return false
-        }
-      })
-  
-    }
-    if(to){
-      const unixTo=Date.parse(to)
-      if(unixTo==="Invalid Date")res.send("Invalid date")
-      response.log=response.log.filter(e=>{
-        const unixDate=Date.parse(e.date)
-        if(unixDate<=unixTo)return true
-        else{
-          return false
-        }
-      })
-  
-    }
-    if(limit && parseInt(limit)!==NaN){
-      response.log=response.log.slice(0,limit)    
-    }
-  
-    
-    
-    
-  
-  
-  
-    response.count=response.log.length
-    response.log=response.log.map(e=>{
-      const {description,duration}=e
-      const date=e.date.toDateString()
-      const exercise={description,duration,date}
-      return exercise
+  try {
+    User.findById(id,(err,data)=>{
+      if(err){
+        res.send(err.message)
+      }
+      let response={
+        _id:data.id,
+        username:data.username,
+        log:[...data.log]
       
-  })
+       
+      }
+      
+      const {from,to,limit}=req.query
   
+  
+      if(from){
+        const unixFrom=Date.parse(from)
+        if(unixFrom==="Invalid Date")res.send("Invalid date")
+        response.log=response.log.filter(e=>{
+          const unixDate=Date.parse(e.date)
+          if(unixDate>=unixFrom)return true
+          else{
+            return false
+          }
+        })
+    
+      }
+      if(to){
+        const unixTo=Date.parse(to)
+        if(unixTo==="Invalid Date")res.send("Invalid date")
+        response.log=response.log.filter(e=>{
+          const unixDate=Date.parse(e.date)
+          if(unixDate<=unixTo)return true
+          else{
+            return false
+          }
+        })
+    
+      }
+      if(limit && parseInt(limit)!==NaN){
+        response.log=response.log.slice(0,limit)    
+      }
     
     
-    res.send(response)
+      response.count=response.log.length
+      response.log=response.log.map(e=>{
+        const {description,duration,date}=e
+        const _date=date.toDateString()
+        const exercise={description,duration,date:_date}
+        return exercise
+        
+      })
+    
+      
+      
+      res.send(response)
+  
+  
+    })
+  } catch (error) {
+    res.send(error.message)
+    
+  }
 
 
-  })
+  
  
   
 })
