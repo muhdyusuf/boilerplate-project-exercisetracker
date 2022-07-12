@@ -73,6 +73,9 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
       }
       )
     }
+    else if(new Date(date)==="Invalid Date"){
+      res.send("Invalid Date")
+    }
     else{
       newExercise=await new Exercise({
         description,
@@ -81,6 +84,8 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
       })
       
     }
+
+    
     const user=await User.findById(id)
     user.log.push(newExercise)
     user.save().then((resolve,reject)=>{
@@ -117,6 +122,9 @@ app.post('/api/users/:_id/exercises',async(req,res)=>{
 app.get("/api/users/:_id/logs",async(req,res)=>{
   const id=req.params._id
   User.findById(id,(err,data)=>{
+    if(err){
+      res.send(err.message)
+    }
     let response={
       _id:data.id,
       username:data.username,
@@ -165,7 +173,9 @@ app.get("/api/users/:_id/logs",async(req,res)=>{
     response.count=response.log.length
     response.log=response.log.map(e=>{
       const {description,duration}=e
-      return {description,duration,date:new Date(e.date).toDateString()}
+      const date=new Date(e.date).toDateString()
+      const exercise={description,duration,date}
+      return exercise
       
   })
   
